@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CADE Medical — Connected Care Overview</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Montserrat:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream:      #fefcf8;
+    --cream-card: #f6f0e6;
+    --ink:        #0d0b09;
+    --ink-soft:   #1e1a15;
+    --ink-muted:  #6b6358;
+    --gold:       #b8701e;
+    --gold-light: #cc8c3a;
+    --border:     #e0d5c4;
+    --green:      #2f7d4f;
+
+    --page-w: 11in;
+    --page-h: 8.5in;
+  }
+
+  html, body {
+    background: #d9d2c5;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--ink);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page { size: letter landscape; margin: 0; }
+
+  .slide {
+    width: var(--page-w);
+    height: var(--page-h);
+    background: var(--cream);
+    position: relative;
+    overflow: hidden;
+    padding: 0.5in 0.6in 0.65in;
+    page-break-after: always;
+    page-break-inside: avoid;
+    margin: 0 auto 14px;
+    box-shadow: 0 3px 20px rgba(0,0,0,0.14);
+  }
+
+  @media print {
+    html, body { background: #fff; }
+    .slide { margin: 0; box-shadow: none; }
+    .nav-web { display: none !important; }
+    body { padding-top: 0 !important; }
+  }
+
+  .nav-web {
+    position: fixed; top:0; left:0; right:0; z-index:100;
+    background: rgba(254,252,248,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-web .lg { font-family: 'Playfair Display', serif; font-weight:400; font-size:16px; }
+  .nav-web .lg span { color: var(--gold); }
+  .nav-web .ct { font-size:11px; color:var(--ink-muted); letter-spacing:1px; font-weight:600; }
+  body { padding-top: 52px; }
+
+  /* ── LAYOUT ── */
+  .two-col {
+    display: grid; grid-template-columns: 0.9fr 1.1fr;
+    gap: 0.45in; height: 100%;
+  }
+  .col-left, .col-right { display: flex; flex-direction: column; justify-content: center; }
+
+  .slide-footer {
+    position: absolute;
+    bottom: 0.28in; left: 0.6in; right: 0.6in;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--ink-muted); font-weight: 700;
+    padding-top: 10px; border-top: 1px solid var(--border);
+  }
+  .slide-footer .left span { color: var(--gold); }
+
+  .sn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 700; color: var(--gold);
+    letter-spacing: 1px; font-style: italic;
+    margin-bottom: 14px;
+  }
+
+  /* ── TYPE ── */
+  .headline {
+    font-family: 'Playfair Display', serif;
+    font-weight:400; font-style: italic;
+    line-height: 1.02; color: var(--ink);
+    letter-spacing: -1.2px;
+    font-size: 58px;
+    margin-bottom: 16px;
+  }
+  .headline.xl { font-size: 72px; }
+  .headline .gold { color: var(--gold); }
+
+  .subhead {
+    font-size: 10px; letter-spacing: 3.5px; text-transform: uppercase;
+    color: var(--gold); font-weight: 800; margin-bottom: 18px;
+  }
+
+  .body {
+    font-size: 14px; font-weight: 400; color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .body strong { font-weight: 700; color: var(--ink); }
+  .body em { font-style: italic; }
+  .body + .body { margin-top: 10px; }
+
+  /* ── HERO ── */
+  .hero {
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center;
+  }
+  .hero .brand-mark {
+    font-family: 'Playfair Display', serif;
+    font-weight:400; font-size: 18px; letter-spacing: 4px;
+    color: var(--gold); margin-bottom: 36px;
+  }
+  .hero .headline { font-size: 92px; letter-spacing: -2.5px; margin-bottom: 22px; }
+  .hero-sub {
+    font-size: 12px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--ink-muted); font-weight: 700; margin-bottom: 38px;
+  }
+  .hero-rule { width: 60px; height: 2px; background: var(--gold); margin: 0 auto 38px; }
+  .prepared {
+    font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--ink-muted); font-weight: 700; margin-bottom: 10px;
+  }
+  .client {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px; font-weight:400; color: var(--ink);
+    margin-bottom: 14px; letter-spacing: -1px;
+  }
+  .presenter { font-size: 12px; color: var(--ink-muted); font-weight: 500; }
+
+  /* ── CARDS ── */
+  .cards-2x2 { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; height: 100%; }
+  .card {
+    background: var(--cream-card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 22px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; font-style: italic; font-weight:400;
+    color: var(--ink); line-height: 1; margin-bottom: 6px;
+    letter-spacing: -1px;
+  }
+  .card-tag {
+    font-size: 9px; font-weight: 800; color: var(--gold);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .card-desc { font-size: 13px; font-weight: 400; color: var(--ink-soft); line-height: 1.5; }
+  .card-desc strong { color: var(--ink); font-weight: 700; }
+
+  /* ── STEPS ── */
+  .steps { display: flex; flex-direction: column; }
+  .step {
+    display: grid; grid-template-columns: 56px 1fr;
+    gap: 18px; padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .step:last-child { border-bottom: none; }
+  .step-n {
+    font-family: 'Playfair Display', serif;
+    font-size: 46px; font-style: italic; font-weight:400;
+    color: var(--gold); line-height: 0.9; letter-spacing: -1.5px;
+  }
+  .step h3 { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; font-weight: 400; color: var(--ink); margin-bottom: 3px; letter-spacing: 0.2px; }
+  .step p { font-size: 12.5px; font-weight: 400; color: var(--ink-soft); line-height: 1.5; }
+
+  /* ── HORIZONTAL TIMELINE ── */
+  .timeline-h {
+    display: grid;
+    gap: 14px;
+    position: relative;
+    margin-top: 20px;
+  }
+  .timeline-h.four { grid-template-columns: repeat(4, 1fr); }
+  .timeline-h.five { grid-template-columns: repeat(5, 1fr); }
+  .timeline-h::before {
+    content: '';
+    position: absolute;
+    top: 6px; left: 0; right: 0;
+    height: 1px; background: var(--border);
+  }
+  .tl-col { position: relative; padding-top: 26px; padding-right: 10px; }
+  .tl-col::before {
+    content: '';
+    position: absolute;
+    top: 1px; left: 0;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--cream); border: 2px solid var(--gold);
+  }
+  .tl-tag { font-size: 8px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); font-weight: 800; margin-bottom: 5px; }
+  .tl-title { font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 5px; line-height: 1.2; }
+  .tl-desc { font-size: 11px; font-weight: 400; color: var(--ink-soft); line-height: 1.5; }
+
+  /* ── FEE TABLE ── */
+  .fee-table {
+    background: var(--cream-card);
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+  }
+  .fee-row {
+    display: grid; grid-template-columns: 1fr auto 60px;
+    align-items: center; gap: 10px;
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+  }
+  .fee-row:last-child { border-bottom: none; }
+  .fee-row.head {
+    background: var(--ink); color: #fff;
+    font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+    font-weight: 700; padding: 8px 12px;
+  }
+  .fee-row .lbl { font-weight: 500; color: var(--ink-soft); }
+  .fee-row .lbl strong { font-weight: 700; color: var(--ink); }
+  .fee-row .val { font-weight: 700; color: var(--ink); font-size: 12px; white-space: nowrap; }
+  .fee-row .cade { font-weight: 800; color: var(--gold); font-size: 12px; white-space: nowrap; text-align: right; }
+  .new-tag {
+    display: inline-block; background: var(--gold); color: #fff;
+    font-size: 7px; letter-spacing: 1px; font-weight: 800; text-transform: uppercase;
+    padding: 1px 5px; border-radius: 2px; margin-left: 3px;
+  }
+  .fee-section-title {
+    font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--gold); font-weight: 800; margin-bottom: 7px;
+  }
+  .fee-quad { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 12px 14px; }
+
+  /* ── RATE ── */
+  .rate-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .rate-box { border-radius: 14px; padding: 34px 24px; text-align: center; }
+  .rate-box.up { background: var(--ink); color: #fff; }
+  .rate-box.flat { background: var(--cream-card); border: 1.5px solid var(--border); }
+  .rate-tag { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; font-weight: 800; margin-bottom: 10px; }
+  .up .rate-tag { color: var(--gold-light); }
+  .flat .rate-tag { color: var(--gold); }
+  .rate-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 120px; font-style: italic; font-weight:400;
+    line-height: 0.9; letter-spacing: -4px;
+  }
+  .up .rate-num { color: #fff; }
+  .flat .rate-num { color: var(--ink); }
+  .rate-sub { font-size: 10px; font-weight: 700; margin-top: 10px; letter-spacing: 2px; text-transform: uppercase; }
+  .up .rate-sub { color: rgba(255,255,255,0.7); }
+  .flat .rate-sub { color: var(--ink-muted); }
+
+  /* ── CALLOUT ── */
+  .callout { background: var(--ink); color: #fff; border-radius: 16px; padding: 18px 22px; }
+  .callout.light { background: var(--cream-card); border: 1.5px solid var(--border); color: var(--ink); }
+  .callout-tag { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-light); font-weight: 800; margin-bottom: 8px; }
+  .callout.light .callout-tag { color: var(--gold); }
+  .callout-head { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px; line-height: 1.25; }
+  .callout.light .callout-head { color: var(--ink); }
+  .callout-body { font-size: 12.5px; color: rgba(255,255,255,0.88); line-height: 1.6; }
+  .callout.light .callout-body { color: var(--ink-soft); }
+  .callout-body strong { color: #fff; font-weight: 700; }
+  .callout.light .callout-body strong { color: var(--ink); }
+
+  /* ── DEVICES ── */
+  .device-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .device-chip {
+    background: var(--cream-card); border: 1.5px solid var(--border);
+    border-radius: 20px; padding: 9px 16px;
+    font-size: 13px; font-weight: 600; color: var(--ink);
+  }
+  .device-chip.spec { border-color: var(--gold); color: var(--gold); }
+  .sec-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink); font-weight: 800; margin: 12px 0 10px; }
+  .sec-label.gold { color: var(--gold); }
+  .sec-label:first-child { margin-top: 0; }
+
+  /* ── SPLIT BENEFITS (3 col) ── */
+  .split-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; height: 100%; }
+  .split-card { border-radius: 16px; padding: 22px 20px; display: flex; flex-direction: column; }
+  .split-card.provider { background: var(--cream-card); border: 1.5px solid var(--border); }
+  .split-card.patient  { background: var(--cream-card); border: 1.5px solid var(--border); border-left: 4px solid var(--green); }
+  .split-card.you      { background: var(--ink); color: #fff; }
+  .split-tag { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; font-weight: 800; margin-bottom: 10px; }
+  .provider .split-tag { color: var(--gold); }
+  .patient .split-tag { color: var(--green); }
+  .you .split-tag { color: var(--gold-light); }
+  .split-head { font-family: 'Playfair Display', serif; font-size: 26px; font-style: italic; font-weight:400; margin-bottom: 14px; line-height: 1.1; letter-spacing: -0.5px; }
+  .provider .split-head, .patient .split-head { color: var(--ink); }
+  .you .split-head { color: #fff; }
+  .split-list { list-style: none; }
+  .split-list li { font-size: 12.5px; line-height: 1.45; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .split-list li:last-child { border-bottom: none; }
+  .you .split-list li { color: rgba(255,255,255,0.88); border-bottom-color: rgba(255,255,255,0.1); }
+  .provider .split-list li, .patient .split-list li { color: var(--ink-soft); }
+
+  /* ── TEAM ── */
+  .team-card { background: var(--cream-card); border: 1.5px solid var(--border); border-radius: 16px; padding: 20px 22px; margin-bottom: 12px; }
+  .team-card:last-child { margin-bottom: 0; }
+  .team-header { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-weight: 800; margin-bottom: 12px; }
+  .team-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
+  .team-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px 20px; }
+  .team-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight:400; color: var(--ink); line-height: 1.1; }
+  .team-role { font-size: 10px; color: var(--ink-muted); font-weight: 500; margin-top: 1px; letter-spacing: 0.5px; }
+
+  /* ── TIER STRIP ── */
+  .tier-strip { display: flex; flex-direction: column; gap: 5px; }
+  .tier-row {
+    display: grid; grid-template-columns: 1fr auto; gap: 10px;
+    background: var(--cream-card); border: 1.5px solid var(--border);
+    border-radius: 8px; padding: 9px 16px; align-items: center;
+  }
+  .tier-row.first { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .tier-row .t-label { font-size: 11px; font-weight: 700; color: var(--ink); }
+  .tier-row.first .t-label { color: #fff; }
+  .tier-row .t-sub { font-size: 9px; font-weight: 500; color: var(--ink-muted); margin-top: 1px; letter-spacing: 0.3px; }
+  .tier-row.first .t-sub { color: rgba(255,255,255,0.65); }
+  .tier-row .t-amt { font-family: 'Playfair Display', serif; font-size: 30px; font-style: italic; font-weight:400; color: var(--gold); letter-spacing: -0.5px; line-height: 1; }
+  .tier-row.first .t-amt { color: var(--gold-light); font-size: 34px; }
+
+  /* ── QUOTE ── */
+  .quote {
+    border-left: 3px solid var(--gold);
+    padding: 14px 20px; margin-top: 16px;
+    background: var(--cream-card); border-radius: 0 10px 10px 0;
+  }
+  .quote p {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-style: italic; font-weight:400;
+    color: var(--ink); line-height: 1.35;
+  }
+
+  /* ── MEGA STAT ── */
+  .stat-hero { text-align: center; padding: 20px 10px; }
+  .stat-hero .mega {
+    font-family: 'Playfair Display', serif;
+    font-size: 200px; font-weight:400; font-style: italic;
+    color: var(--ink); line-height: 0.9; letter-spacing: -8px;
+    margin-bottom: 10px;
+  }
+  .stat-hero .label {
+    font-size: 11px; font-weight: 800; color: var(--gold);
+    letter-spacing: 3px; text-transform: uppercase; margin-bottom: 14px;
+  }
+  .stat-hero .desc {
+    font-size: 14px; color: var(--ink-soft); line-height: 1.55; max-width: 380px; margin: 0 auto;
+  }
+  .stat-hero .desc strong { color: var(--ink); font-weight: 700; }
+
+  /* ── CTA ── */
+  .cta-slide { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+  .cta-btn {
+    display: inline-block; background: var(--ink); color: #fff;
+    font-size: 10px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;
+    padding: 16px 34px; border-radius: 5px; text-decoration: none;
+    margin-top: 32px;
+  }
+
+  /* ── TESTIMONIALS / CLIENTS ── */
+  .client-wall {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .client-badge {
+    background: var(--cream-card);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 12px;
+    text-align: center;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 46px;
+  }
+  .client-badge span {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px; font-weight: 600; color: var(--ink);
+    line-height: 1.1; letter-spacing: 0.2px;
+  }
+
+  .testimonial-list { display: flex; flex-direction: column; gap: 10px; }
+  .testimonial {
+    background: var(--cream-card);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 11px 14px;
+  }
+  .testimonial p {
+    font-family: 'Playfair Display', serif;
+    font-size: 13.5px; font-style: italic; font-weight: 600;
+    color: var(--ink); line-height: 1.35; margin-bottom: 5px;
+  }
+  .testimonial .attr {
+    font-size: 9.5px; font-weight: 700; color: var(--ink-muted);
+    letter-spacing: 0.3px; text-transform: uppercase;
+  }
+  .testimonial .attr span { color: var(--gold); }
+
+  .ally-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--cream-card); border: 1.5px solid var(--border);
+    padding: 5px 11px; border-radius: 20px;
+    font-size: 9px; font-weight: 800; color: var(--ink-muted);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .ally-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+
+  /* ── VISUAL CLEANUP ── */
+  .box {
+    background: var(--cream-card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+  }
+  .box.dark {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+  .box.dark .tag { color: var(--gold-light); }
+  .box.dark .desc { color: rgba(255,255,255,0.82); }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    font-weight:600; color: var(--gold); margin-bottom: 8px;
+  }
+  .box-head {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-style: italic; font-weight:400;
+    color: var(--ink); line-height: 1.1; margin-bottom: 8px;
+  }
+  .box.dark .box-head { color: #fff; }
+  .desc {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px; font-weight: 400; color: var(--ink-soft); line-height: 1.5;
+  }
+  .desc strong { color: var(--ink); font-weight: 700; }
+  
+  /* Ensure all body text uses Montserrat */
+  .slide, .slide * { font-family: inherit; }
+  .headline, .card-title, .split-head, .team-name, .quote p,
+  .box-head, .sn, .client, .brand-mark,
+  .testimonial p, .client-badge span,
+  .step-n, .tl-title { font-family: 'Playfair Display', serif !important; }
+
+  /* Subtle card lift on print */
+  .box, .card, .split-card, .callout, .fee-table {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+  }
+</style>
+</head>
+<body>
+
+<div class="nav-web">
+  <div class="lg">CADE <span>Medical</span></div>
+  <div class="ct">RPM · CCM · RTM · PCM</div>
+</div>
+
+<!-- ═════════ 01 HERO ═════════ -->
+<section class="slide hero">
+  <div class="brand-mark">CADE MEDICAL</div>
+  <div class="headline" style="font-size:92px; letter-spacing:-2.5px;">
+    Live vitals. Mapped<br>between every <span class="gold">visit</span>.
+  </div>
+
+  <div style="display:flex; gap: 28px; align-items:center; justify-content:center; margin-top: 36px; margin-bottom: 40px;">
+    <div style="text-align:center; background:var(--ink); border-radius:12px; padding:10px 28px;">
+      <div style="font-family:'Playfair Display',serif; font-size:34px; font-style:italic; font-weight:400; color:var(--gold-light); letter-spacing:-0.5px;">RPM</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:7.5px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.55); font-weight:500; margin-top:3px;">Remote Physiological</div>
+    </div>
+    <div style="width:3px; height:3px; border-radius:50%; background: var(--gold);"></div>
+    <div style="text-align:center;">
+      <div style="font-family:'Playfair Display',serif; font-size:16px; font-style:italic; font-weight:400; color:var(--ink-muted); letter-spacing:-0.3px;">CCM</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:7px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-muted); font-weight:500; margin-top:2px;">Chronic Care</div>
+    </div>
+    <div style="width:3px; height:3px; border-radius:50%; background: var(--gold);"></div>
+    <div style="text-align:center;">
+      <div style="font-family:'Playfair Display',serif; font-size:16px; font-style:italic; font-weight:400; color:var(--ink-muted); letter-spacing:-0.3px;">RTM</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:7px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-muted); font-weight:500; margin-top:2px;">Therapeutic</div>
+    </div>
+    <div style="width:3px; height:3px; border-radius:50%; background: var(--gold);"></div>
+    <div style="text-align:center;">
+      <div style="font-family:'Playfair Display',serif; font-size:16px; font-style:italic; font-weight:400; color:var(--ink-muted); letter-spacing:-0.3px;">PCM</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:7px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-muted); font-weight:500; margin-top:2px;">Principal Care</div>
+    </div>
+  </div>
+
+  <div class="hero-rule"></div>
+  <div class="presenter" style="font-size: 14px; letter-spacing: 1px;">Presented by <strong style="font-weight:600; color:var(--ink);">Colin Smith</strong></div>
+
+  <div style="position:absolute; bottom: 64px; left: 0.6in; right: 0.6in; text-align:center; font-size:8.5px; letter-spacing:1.8px; text-transform:uppercase; color:var(--ink-muted); font-weight:400;">
+    Remote Physiological Monitoring &nbsp;·&nbsp; FDA-Cleared Cellular Devices &nbsp;·&nbsp; Stark Law &amp; AKS Safe Harbor Compliant
+  </div>
+
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span></div>
+    <div>Confidential</div>
+  </div>
+</section>
+
+<!-- ═════════ 02 THE OPPORTUNITY ═════════ -->
+<section class="slide" style="padding: 0.4in 0.5in 0.55in;">
+  <div style="display:grid; grid-template-rows: auto 1fr; height: 100%; gap: 12px;">
+
+    <div>
+      <div class="sn">01</div>
+      <div class="subhead">The Opportunity</div>
+      <div class="headline" style="font-size:52px;">Live data. Mapped<br>between every <span class="gold">visit</span>.</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1.4fr 1fr; gap: 12px;">
+
+      <!-- LEFT COLUMN: 3 stacked boxes -->
+      <div style="display:grid; grid-template-rows: auto auto auto; gap: 10px;">
+
+        <!-- CARDIOLOGY INSIGHT -->
+        <div class="box" style="padding:14px 18px; background:var(--ink); color:#fff; border-color:var(--ink);">
+          <div style="font-family:'Montserrat',sans-serif; font-size:12px; color:rgba(255,255,255,0.88); line-height:1.6;">This Medicare-backed program is designed to track trends and <strong style="color:var(--gold-light);">catch patients headed in a negative direction days or weeks before something dangerous happens.</strong> It presents data trends on a clean chart for your doctors to review and discuss with the patient when they come back in. No more written-down vitals. Direct, cellular-fed data into the system.</div>
+        </div>
+
+        <!-- THE REALITY + GAP -->
+        <div class="box" style="padding:14px 18px;">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+              <div class="tag" style="margin-bottom:8px;">The Reality</div>
+              <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:8px;">
+                <div style="font-family:'Playfair Display',serif; font-size:48px; font-style:italic; font-weight:400; color:var(--ink); line-height:1; letter-spacing:-1px;">85%</div>
+                <div style="font-size:11px; color:var(--ink-soft); line-height:1.35;">of Medicare patients have <strong>1+ chronic condition</strong>.</div>
+              </div>
+              <div style="display:flex; align-items:baseline; gap:10px;">
+                <div style="font-family:'Playfair Display',serif; font-size:48px; font-style:italic; font-weight:400; color:var(--ink); line-height:1; letter-spacing:-1px;">90%</div>
+                <div style="font-size:11px; color:var(--ink-soft); line-height:1.35;">of US healthcare spending on <strong>chronic conditions</strong>.</div>
+              </div>
+            </div>
+            <div>
+              <div class="tag" style="margin-bottom:8px;">The Gap</div>
+              <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:8px;">
+                <div style="font-family:'Playfair Display',serif; font-size:48px; font-style:italic; font-weight:400; color:var(--gold); line-height:1; letter-spacing:-1px;">4%</div>
+                <div style="font-size:11px; color:var(--ink-soft); line-height:1.35;">receive <strong>CCM</strong>.</div>
+              </div>
+              <div style="display:flex; align-items:baseline; gap:10px;">
+                <div style="font-family:'Playfair Display',serif; font-size:48px; font-style:italic; font-weight:400; color:var(--gold); line-height:1; letter-spacing:-1px;">7%</div>
+                <div style="font-size:11px; color:var(--ink-soft); line-height:1.35;">receive <strong>RPM</strong>.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROVEN OUTCOMES -->
+        <div class="box" style="padding:14px 18px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+            <div class="tag" style="margin-bottom:0;">Proven Outcomes</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-muted); font-weight:500;">Observed Across Monitored Populations</div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:6px;">
+            <div style="background:rgba(0,0,0,0.035); border-radius:8px; padding:8px 6px; text-align:center;">
+              <div style="font-family:'Playfair Display',serif; font-size:22px; font-style:italic; font-weight:400; color:var(--ink); line-height:1;">&#8722;15</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:7.5px; color:var(--ink-muted); font-weight:500; letter-spacing:1px; text-transform:uppercase; margin-top:3px;">mg/dL Glucose</div>
+            </div>
+            <div style="background:rgba(0,0,0,0.035); border-radius:8px; padding:8px 6px; text-align:center;">
+              <div style="font-family:'Playfair Display',serif; font-size:22px; font-style:italic; font-weight:400; color:var(--ink); line-height:1;">&#8722;10</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:7.5px; color:var(--ink-muted); font-weight:500; letter-spacing:1px; text-transform:uppercase; margin-top:3px;">Systolic BP</div>
+            </div>
+            <div style="background:rgba(0,0,0,0.035); border-radius:8px; padding:8px 6px; text-align:center;">
+              <div style="font-family:'Playfair Display',serif; font-size:22px; font-style:italic; font-weight:400; color:var(--ink); line-height:1;">&#8722;8</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:7.5px; color:var(--ink-muted); font-weight:500; letter-spacing:1px; text-transform:uppercase; margin-top:3px;">Diastolic BP</div>
+            </div>
+            <div style="background:rgba(0,0,0,0.035); border-radius:8px; padding:8px 6px; text-align:center;">
+              <div style="font-family:'Playfair Display',serif; font-size:22px; font-style:italic; font-weight:400; color:var(--ink); line-height:1;">&#8722;13</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:7.5px; color:var(--ink-muted); font-weight:500; letter-spacing:1px; text-transform:uppercase; margin-top:3px;">lbs Weight</div>
+            </div>
+            <div style="background:var(--ink); border-radius:8px; padding:8px 6px; text-align:center;">
+              <div style="font-family:'Playfair Display',serif; font-size:22px; font-style:italic; font-weight:400; color:var(--gold-light); line-height:1;">&#8722;35%</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:7.5px; color:rgba(255,255,255,0.6); font-weight:500; letter-spacing:1px; text-transform:uppercase; margin-top:3px;">ER Visits</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Financial -->
+      <div style="background:var(--ink); color:#fff; border-radius:14px; padding:18px 18px; display:flex; flex-direction:column;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold-light); font-weight:500; margin-bottom:10px;">Reimbursement Potential</div>
+        <div style="font-family:'Playfair Display',serif; font-size:22px; font-style:italic; font-weight:400; color:#fff; margin-bottom:14px; line-height:1.05;">Recurring revenue<br>on qualified patients.</div>
+
+        <div style="padding:12px 0; border-top:1px solid rgba(255,255,255,0.14); border-bottom:1px solid rgba(255,255,255,0.14);">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); font-weight:500; margin-bottom:4px;">Potential Per Patient</div>
+          <div style="display:flex; align-items:baseline; gap:8px;">
+            <div style="font-family:'Playfair Display',serif; font-size:48px; font-style:italic; font-weight:400; color:var(--gold-light); line-height:0.95;">$200+</div>
+            <div style="font-size:10px; color:rgba(255,255,255,0.6); font-weight:600;">per month</div>
+          </div>
+        </div>
+
+        <div style="padding:12px 0;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); font-weight:500; margin-bottom:4px;">Typical Per Provider</div>
+          <div style="display:flex; align-items:baseline; gap:8px;">
+            <div style="font-family:'Playfair Display',serif; font-size:48px; font-style:italic; font-weight:400; color:var(--gold-light); line-height:0.95;">50 to 500</div>
+            <div style="font-size:10px; color:rgba(255,255,255,0.6); font-weight:600;">patients</div>
+          </div>
+        </div>
+
+        <div style="margin-top:auto; padding-top:10px; border-top:1px solid rgba(255,255,255,0.14); font-family:'JetBrains Mono',monospace; font-size:8.5px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,0.55); font-weight:500;">
+          See full fee schedule &nbsp;&#8594;&nbsp; slide 7
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>01 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 03 HOW IT WORKS ═════════ -->
+<section class="slide">
+  <div class="two-col">
+    <div class="col-left">
+      <div class="sn">02</div>
+      <div class="subhead">The Program</div>
+      <div class="headline xl">
+        How it<br><span class="gold">works</span>.
+      </div>
+      
+    </div>
+    <div class="col-right">
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div>
+            <h3>We Provide The Staff</h3>
+            <p>Nurse Practitioners, RNs, Medical Assistants. No call centers. No AI.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div>
+            <h3>We Provide The Devices</h3>
+            <p>Cellular-connected. Ship direct. No Wi-Fi, no app.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div>
+            <h3>We Integrate With Your EMR</h3>
+            <p>Readings and notes flow into your existing system. No new software.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div>
+            <h3>You Bill. You Get Reimbursed.</h3>
+            <p>We complete the CPT work. You keep the billing relationship.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">5</div>
+          <div>
+            <h3>Minimal Upfront Work.</h3>
+            <p>Delayed fees designed to let the provider get paid first.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">6</div>
+          <div>
+            <h3>Prevent Chronic From Becoming Critical</h3>
+            <p>Early intervention keeps patients out of the ER.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>02 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 04 TEAM + DEVICES ═════════ -->
+<section class="slide" style="padding: 0.4in 0.5in 0.55in;">
+  <div style="display:grid; grid-template-rows: auto auto auto auto auto; height:100%; gap:8px; align-content:center;">
+
+    <div style="text-align:center;">
+      <div class="sn" style="display:inline-block;">03</div>
+      <div class="headline" style="font-size:42px; letter-spacing:-1px; margin-top:2px; font-weight:600;">Your Dedicated <span class="gold">RPM Team.</span></div>
+    </div>
+
+    <div style="background:var(--cream-card); border:1.5px solid var(--border); border-radius:14px; padding:10px 16px; display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; align-items:center;">
+      <div style="text-align:center;">
+            <div style="width:72px; height:72px; margin:0 auto 5px; border-radius:50%; overflow:hidden;">
+              <img src="https://imagedelivery.net/IImSqGpRtERo2xUi3EGF4Q/78d44313-5754-44c5-116a-0b8b1726ce00/public" alt="Diane Chavez" style="width:100%; height:100%; object-fit:cover; display:block;">
+            </div>
+            <div style="font-family:'Playfair Display',serif; font-size:13px; font-weight:400; color:var(--ink); line-height:1.1;">Diane Chavez</div>
+            <div style="font-size:7.5px; color:var(--ink-muted); font-weight:400; letter-spacing:1.2px; text-transform:uppercase; margin-top:1px;">Director</div>
+          </div>
+      <div style="text-align:center;">
+            <div style="width:72px; height:72px; margin:0 auto 5px; border-radius:50%; overflow:hidden;">
+              <img src="https://imagedelivery.net/IImSqGpRtERo2xUi3EGF4Q/c538eb44-3c42-4bab-d9df-7ea488097900/public" alt="Anna Gaskin" style="width:100%; height:100%; object-fit:cover; display:block;">
+            </div>
+            <div style="font-family:'Playfair Display',serif; font-size:13px; font-weight:400; color:var(--ink); line-height:1.1;">Anna Gaskin</div>
+            <div style="font-size:7.5px; color:var(--ink-muted); font-weight:400; letter-spacing:1.2px; text-transform:uppercase; margin-top:1px;">Manager</div>
+          </div>
+      <div style="text-align:center;">
+            <div style="width:72px; height:72px; margin:0 auto 5px; border-radius:50%; overflow:hidden;">
+              <img src="https://imagedelivery.net/IImSqGpRtERo2xUi3EGF4Q/dd469f36-213d-402b-5ff7-48be15d0f700/public" alt="Stefanie Maier" style="width:100%; height:100%; object-fit:cover; display:block;">
+            </div>
+            <div style="font-family:'Playfair Display',serif; font-size:13px; font-weight:400; color:var(--ink); line-height:1.1;">Stefanie Maier</div>
+            <div style="font-size:7.5px; color:var(--ink-muted); font-weight:400; letter-spacing:1.2px; text-transform:uppercase; margin-top:1px;">Director</div>
+          </div>
+      <div style="text-align:center;">
+            <div style="width:72px; height:72px; margin:0 auto 5px; border-radius:50%; overflow:hidden;">
+              <img src="https://imagedelivery.net/IImSqGpRtERo2xUi3EGF4Q/a1398e9d-549f-4b9b-d848-347fd76e5e00/public" alt="Stacy Gillham" style="width:100%; height:100%; object-fit:cover; display:block;">
+            </div>
+            <div style="font-family:'Playfair Display',serif; font-size:13px; font-weight:400; color:var(--ink); line-height:1.1;">Stacy Gillham</div>
+            <div style="font-size:7.5px; color:var(--ink-muted); font-weight:400; letter-spacing:1.2px; text-transform:uppercase; margin-top:1px;">Manager</div>
+          </div>
+      <div style="text-align:center;">
+            <div style="width:72px; height:72px; margin:0 auto 5px; border-radius:50%; overflow:hidden;">
+              <img src="https://imagedelivery.net/IImSqGpRtERo2xUi3EGF4Q/c044227f-ecfb-4dd8-9165-d213b521df00/public" alt="Amanda Lopez" style="width:100%; height:100%; object-fit:cover; display:block;">
+            </div>
+            <div style="font-family:'Playfair Display',serif; font-size:13px; font-weight:400; color:var(--ink); line-height:1.1;">Amanda Lopez</div>
+            <div style="font-size:7.5px; color:var(--ink-muted); font-weight:400; letter-spacing:1.2px; text-transform:uppercase; margin-top:1px;">Manager</div>
+          </div>
+    </div>
+
+    <div style="text-align:center; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--ink-muted); font-weight:700; padding:4px 0;">
+      No AI Calls &nbsp;·&nbsp; No Call Centers
+    </div>
+
+    <div style="display:flex; align-items:center; gap:14px; padding:0 4px;">
+      <div style="flex:1; height:1px; background:var(--border);"></div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold); font-weight:500;">Cellular Devices</div>
+      <div style="flex:1; height:1px; background:var(--border);"></div>
+    </div>
+
+    <div style="display:grid; grid-template-rows:auto auto; gap:8px;">
+      <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:8px;">
+        <!-- CGM (merged) -->
+        <div style="background:var(--cream-card); border:1.5px solid var(--border); border-radius:8px; padding:8px; text-align:center;">
+          <div style="width:100%; height:80px; border-radius:6px; overflow:hidden; margin-bottom:6px;"><img src="data:image/jpeg;base64,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" alt="Continuous Glucose Monitor" style="width:100%; height:100%; object-fit:cover; display:block;" loading="lazy"></div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:1.8px; text-transform:uppercase; color:var(--gold); font-weight:500;">CGM</div>
+          <div style="font-family:'Playfair Display',serif; font-size:14px; font-weight:400; color:var(--ink); line-height:1;">Glucose Monitoring</div>
+          <div style="font-size:7.5px; color:var(--ink-muted); margin-top:3px; line-height:1.3;">Dexcom G7 · Libre 3 Plus</div>
+        </div>
+        <!-- BP Monitor -->
+        <div style="background:var(--cream-card); border:1.5px solid var(--border); border-radius:8px; padding:8px; text-align:center;">
+          <div style="width:100%; height:80px; border-radius:6px; overflow:hidden; margin-bottom:6px;"><img src="https://imagedelivery.net/IImSqGpRtERo2xUi3EGF4Q/2912d069-31c8-4f93-f2dc-3732a098f800/public" alt="BodyTrace Cuff" style="width:100%; height:100%; object-fit:cover;" loading="lazy"></div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:1.8px; text-transform:uppercase; color:var(--gold); font-weight:500;">RPM</div>
+          <div style="font-family:'Playfair Display',serif; font-size:14px; font-weight:400; color:var(--ink); line-height:1;">BodyTrace Cuff</div>
+          <div style="font-size:7.5px; color:var(--ink-muted); margin-top:3px;">Cellular BP monitor</div>
+        </div>
+        <!-- Weight Scale -->
+        <div style="background:var(--cream-card); border:1.5px solid var(--border); border-radius:8px; padding:8px; text-align:center;">
+          <div style="width:100%; height:80px; border-radius:6px; overflow:hidden; margin-bottom:6px;"><img src="https://imagedelivery.net/IImSqGpRtERo2xUi3EGF4Q/36970769-d930-482a-3cd1-63c2f405bd00/public" alt="BodyTrace Scale" style="width:100%; height:100%; object-fit:cover;" loading="lazy"></div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:1.8px; text-transform:uppercase; color:var(--gold); font-weight:500;">RPM</div>
+          <div style="font-family:'Playfair Display',serif; font-size:14px; font-weight:400; color:var(--ink); line-height:1;">BodyTrace Scale</div>
+          <div style="font-size:7.5px; color:var(--ink-muted); margin-top:3px;">Cellular weight scale</div>
+        </div>
+        <!-- Pulse Oximeter -->
+        <div style="background:var(--cream-card); border:1.5px solid var(--border); border-radius:8px; padding:8px; text-align:center;">
+          <div style="width:100%; height:80px; border-radius:6px; overflow:hidden; margin-bottom:6px; background:#fff;"><img src="https://resources.tellihealth.com/Telli_Health_4_G_Pulse_Oximeter_1_1_8328723113.webp" alt="Telli Health 4G Pulse Oximeter" style="width:100%; height:100%; object-fit:contain; display:block;" loading="lazy"></div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:1.8px; text-transform:uppercase; color:var(--gold); font-weight:500;">RPM</div>
+          <div style="font-family:'Playfair Display',serif; font-size:14px; font-weight:400; color:var(--ink); line-height:1;">Telli Health SpO2</div>
+          <div style="font-size:7.5px; color:var(--ink-muted); margin-top:3px;">4G Pulse Oximeter</div>
+        </div>
+        <!-- Pillbox -->
+        <div style="background:var(--cream-card); border:1.5px solid var(--border); border-radius:8px; padding:8px; text-align:center;">
+          <div style="width:100%; height:80px; border-radius:6px; overflow:hidden; margin-bottom:6px;"><img src="https://imagedelivery.net/IImSqGpRtERo2xUi3EGF4Q/6d57962b-619b-4a33-b39e-725ba38e2d00/public" alt="Tenovi Pillbox" style="width:100%; height:100%; object-fit:cover;" loading="lazy"></div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:1.8px; text-transform:uppercase; color:var(--gold); font-weight:500;">Adherence</div>
+          <div style="font-family:'Playfair Display',serif; font-size:14px; font-weight:400; color:var(--ink); line-height:1;">Tenovi Pillbox</div>
+          <div style="font-size:7.5px; color:var(--ink-muted); margin-top:3px;">Medication tracker</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; justify-content:center;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--ink-muted); font-weight:500;">Also:</div>
+        <div class="device-chip" style="padding:4px 8px; font-size:9px;">Glucometers</div>
+        <div class="device-chip spec" style="padding:4px 8px; font-size:9px;">Sleep Monitors</div>
+        <div class="device-chip spec" style="padding:4px 8px; font-size:9px;">Heart Rate</div>
+        <div class="device-chip spec" style="padding:4px 8px; font-size:9px;">Peak Flow</div>
+        <div class="device-chip spec" style="padding:4px 8px; font-size:9px;">Thermometers</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--ink-muted); font-weight:500; margin-left:4px;">No Wi-Fi · No Bluetooth</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>03 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 06 FOUR PROGRAMS ═════════ -->
+<section class="slide">
+  <div style="display:grid; grid-template-rows: auto 1fr; height: 100%; gap: 18px;">
+    <div>
+      <div class="sn">04</div>
+      <div class="subhead">The Platform</div>
+      <div style="display:grid; grid-template-columns: 1fr auto; align-items: end; gap: 30px;">
+        <div class="headline xl">Four programs. One <span class="gold">platform</span>.</div>
+        
+      </div>
+    </div>
+    <div class="cards-2x2">
+      <div class="card" style="background:var(--ink); color:#fff; border:none;">
+        <div class="card-title" style="color:var(--gold-light);">RPM</div>
+        <div class="card-tag" style="color:rgba(255,255,255,0.7);">Remote Physiological Monitoring</div>
+        <div class="card-desc" style="color:rgba(255,255,255,0.82);">Cellular devices in the home. BP, weight, SpO2, glucose transmitted automatically. <strong style="color:var(--gold-light);">Between-visit trends ready before every appointment.</strong></div>
+      </div>
+      <div class="card">
+        <div class="card-title">CCM</div>
+        <div class="card-tag">Chronic Care Management</div>
+        <div class="card-desc">Monthly care coordination for patients with <strong>2+ chronic conditions</strong>. Non-device. Twenty minutes or more per month.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">RTM</div>
+        <div class="card-tag">Remote Therapeutic Monitoring</div>
+        <div class="card-desc">Therapy adherence and symptom tracking. Common in <strong>MSK, wound, respiratory, and rehab</strong>.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">PCM</div>
+        <div class="card-tag">Principal Care Management</div>
+        <div class="card-desc">Enhanced coordination for a <strong>single chronic condition</strong>. Broader than CCM. Often replaces or bundles it.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>04 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 07 BENEFITS SPLIT ═════════ -->
+<section class="slide">
+  <div style="display:grid; grid-template-rows: auto 1fr; height: 100%; gap: 22px;">
+    <div>
+      <div class="sn">05</div>
+      <div class="subhead">Benefits</div>
+      <div class="headline xl">Built for both sides of the <span class="gold">visit</span>.</div>
+    </div>
+    <div class="split-3">
+      <div class="split-card provider">
+        <div class="split-tag">Provider</div>
+        <div class="split-head">Recurring revenue.<br>Better visits.</div>
+        <ul class="split-list">
+          <li>Higher retention and satisfaction</li>
+          <li>Recurring monthly revenue</li>
+          <li>Better visits with home data context</li>
+          <li>Visibility between appointments</li>
+          <li>Fewer routine calls and visits</li>
+        </ul>
+      </div>
+      <div class="split-card patient">
+        <div class="split-tag">Patient</div>
+        <div class="split-head">Proactive care.<br>Not reactive.</div>
+        <ul class="split-list">
+          <li>Fewer hospitalizations and ER visits</li>
+          <li>Better medication adherence</li>
+          <li>Lower out-of-pocket costs</li>
+          <li>Care from home for mobility-limited patients</li>
+          <li>Access to care teams beyond office hours</li>
+        </ul>
+      </div>
+      <div class="split-card you">
+        <div class="split-tag">What You Do</div>
+        <div class="split-head">Four things.<br>That's it.</div>
+        <ul class="split-list">
+          <li>Drive enrollment</li>
+          <li>Review actionable alerts</li>
+          <li>Respond to clinical escalations</li>
+          <li>Approve or adjust care plans</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>05 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 08 FINANCIAL ═════════ -->
+<section class="slide">
+  <div style="display:grid; grid-template-rows: auto 1fr; height: 100%; gap: 24px;">
+    <div>
+      <div class="sn">06</div>
+      <div class="subhead">The Economics</div>
+      <div class="headline xl">The RPM <span class="gold">revenue</span>.</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap: 28px; align-items: stretch;">
+
+      <!-- LEFT: Profit hero -->
+      <div style="background: var(--cream-card); border: 1.5px solid var(--border); border-radius: 16px; padding: 40px 36px; display:flex; flex-direction:column; justify-content:center; text-align:center;">
+        <div style="font-family:'Playfair Display',serif; font-size:180px; font-weight:400; font-style:italic; color:var(--ink); line-height:0.9; letter-spacing:-8px; margin-bottom: 10px;">$1M</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom: 24px;">Annual Profit · Per 1,000 Patients</div>
+        <div style="height:1px; background: var(--border); width:60px; margin: 0 auto 24px;"></div>
+        <div style="font-family:'Playfair Display',serif; font-size:56px; font-weight:400; font-style:italic; color:var(--ink); line-height:1; letter-spacing:-1.5px;">$80<span style="color:var(--ink-muted); font-size:32px;">&nbsp;to&nbsp;</span>$85</div>
+        <div style="font-size:10px; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold); font-weight:600; margin-top: 10px;">Profit · Per Patient · Per Month</div>
+      </div>
+
+      <!-- RIGHT: Dual enrollment stack -->
+      <div style="background: var(--ink); border-radius: 16px; padding: 30px 26px; display:flex; flex-direction:column; justify-content:center;">
+        <div style="font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--gold-light); font-weight:800; margin-bottom: 8px;">Dual Enrollment</div>
+        <div style="font-family:'Playfair Display',serif; font-size:34px; font-style:italic; font-weight:400; color:#fff; line-height:1.05; margin-bottom: 22px; letter-spacing:-0.5px;">Reimbursement<br>stacks on the<br><span style="color:var(--gold-light);">same panel.</span></div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px;">
+          <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 12px 14px; text-align:center;">
+            <div style="font-family:'Playfair Display',serif; font-size:26px; font-style:italic; font-weight:400; color:#fff; line-height:1;">RPM</div>
+            <div style="font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,0.55); font-weight:400; margin-top:4px;">Monitoring</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 12px 14px; text-align:center;">
+            <div style="font-family:'Playfair Display',serif; font-size:26px; font-style:italic; font-weight:400; color:#fff; line-height:1;">CCM</div>
+            <div style="font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,0.55); font-weight:400; margin-top:4px;">Chronic Care</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 12px 14px; text-align:center;">
+            <div style="font-family:'Playfair Display',serif; font-size:26px; font-style:italic; font-weight:400; color:#fff; line-height:1;">RTM</div>
+            <div style="font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,0.55); font-weight:400; margin-top:4px;">Therapeutic</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 12px 14px; text-align:center;">
+            <div style="font-family:'Playfair Display',serif; font-size:26px; font-style:italic; font-weight:400; color:#fff; line-height:1;">PCM</div>
+            <div style="font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,0.55); font-weight:400; margin-top:4px;">Principal Care</div>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:baseline; justify-content:center; gap:12px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.14);">
+          <div style="font-family:'Playfair Display',serif; font-size:72px; font-style:italic; font-weight:400; color:var(--gold-light); line-height:1; letter-spacing:-2px;">$200+</div>
+          <div style="font-size:10px; letter-spacing:2.5px; text-transform:uppercase; color:rgba(255,255,255,0.7); font-weight:400;">Revenue · Per<br>Patient · Per Month</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>06 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 14 MEDICARE vs CADE ═════════ -->
+<section class="slide" style="padding: 0.4in 0.5in 0.55in;">
+  <div style="display:grid; grid-template-rows: auto auto 1fr; height: 100%; gap: 12px;">
+    <div style="display:grid; grid-template-columns: 1.3fr 1fr; gap: 20px; align-items: center;">
+      <div>
+        <div class="sn">07</div>
+        <div class="subhead">2026 Pricing</div>
+        <div class="headline" style="font-size: 48px;">Medicare went up. <span class="gold">CADE</span> didn't.</div>
+      </div>
+      <div class="rate-compare" style="gap:10px;">
+        <div class="rate-box up" style="padding: 20px 16px;">
+          <div class="rate-tag">Medicare</div>
+          <div class="rate-num" style="font-size: 72px;">+12%</div>
+          <div class="rate-sub">2025 → 2026</div>
+        </div>
+        <div class="rate-box flat" style="padding: 20px 16px;">
+          <div class="rate-tag">CADE</div>
+          <div class="rate-num" style="font-size: 72px;">0%</div>
+          <div class="rate-sub">No Change</div>
+        </div>
+      </div>
+    </div>
+    <div></div>
+    <div class="fee-quad">
+      <div>
+        <div class="fee-section-title">Remote Patient Monitoring</div>
+        <div class="fee-table">
+          <div class="fee-row head"><span>CPT · Description</span><span>2026</span><span style="text-align:right;">CADE</span></div>
+          <div class="fee-row"><span class="lbl"><strong>99445</strong> Readings 2–15 Days<span class="new-tag">New</span></span><span class="val">$62.10</span><span class="cade">$24.50</span></div>
+          <div class="fee-row"><span class="lbl"><strong>99453</strong> Initial Setup</span><span class="val">$25.53</span><span class="cade">$0.00</span></div>
+          <div class="fee-row"><span class="lbl"><strong>99454</strong> Readings 16+ Days</span><span class="val">$62.10</span><span class="cade">$24.50</span></div>
+          <div class="fee-row"><span class="lbl"><strong>99457</strong> Care Mgmt 20 min</span><span class="val">$57.66</span><span class="cade">$26.50</span></div>
+          <div class="fee-row"><span class="lbl"><strong>99458</strong> Additional 40–60 min</span><span class="val">$45.28</span><span class="cade">$20.50</span></div>
+          <div class="fee-row"><span class="lbl"><strong>99470</strong> Care Mgmt 10–20 min<span class="new-tag">New</span></span><span class="val">$29.00</span><span class="cade">$13.92</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="fee-section-title">Remote Therapeutic Monitoring</div>
+        <div class="fee-table">
+          <div class="fee-row head"><span>CPT · Description</span><span>2026</span><span style="text-align:right;">CADE</span></div>
+          <div class="fee-row"><span class="lbl"><strong>98975</strong> Initial Setup</span><span class="val">$25.53</span><span class="cade">$0.00</span></div>
+          <div class="fee-row"><span class="lbl"><strong>98976</strong> Respiratory (30d)</span><span class="val">$62.10</span><span class="cade">$24.50</span></div>
+          <div class="fee-row"><span class="lbl"><strong>98977</strong> MSK (30d)</span><span class="val">$61.30</span><span class="cade">$24.50</span></div>
+          <div class="fee-row"><span class="lbl"><strong>98980</strong> Treatment Mgmt 20 min</span><span class="val">$60.62</span><span class="cade">$27.00</span></div>
+          <div class="fee-row"><span class="lbl"><strong>98981</strong> Additional 20 min</span><span class="val">$45.50</span><span class="cade">$20.50</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="fee-section-title">Chronic Care Management</div>
+        <div class="fee-table">
+          <div class="fee-row head"><span>CPT · Description</span><span>2026</span><span style="text-align:right;">CADE</span></div>
+          <div class="fee-row"><span class="lbl"><strong>99490</strong> Initial 20 Min</span><span class="val">$72.02</span><span class="cade">$32.00</span></div>
+          <div class="fee-row"><span class="lbl"><strong>99439</strong> Additional 20 Min</span><span class="val">$55.35</span><span class="cade">$24.50</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="fee-section-title">Principal Care Management</div>
+        <div class="fee-table">
+          <div class="fee-row head"><span>CPT · Description</span><span>2026</span><span style="text-align:right;">CADE</span></div>
+          <div class="fee-row"><span class="lbl"><strong>99424</strong> First 30 Min</span><span class="val">$94.22</span><span class="cade">$42.00</span></div>
+          <div class="fee-row"><span class="lbl"><strong>99425</strong> Additional 30 Min</span><span class="val">$66.43</span><span class="cade">$30.50</span></div>
+          <div class="fee-row"><span class="lbl"><strong>99426</strong> Clinical Staff (Directed)</span><span class="val">$74.02</span><span class="cade">$32.50</span></div>
+          <div class="fee-row"><span class="lbl"><strong>99427</strong> Additional 30 Min PCM</span><span class="val">$59.69</span><span class="cade">$26.50</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>07 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 13 NEW CODES 2026 ═════════ -->
+<section class="slide">
+  <div class="two-col">
+    <div class="col-left">
+      <div class="sn">08</div>
+      <div style="display:inline-block; background:var(--gold); color:#fff; font-size:9px; letter-spacing:3px; text-transform:uppercase; font-weight:800; padding:5px 12px; border-radius:4px; margin-bottom:14px;">New Codes · 1.1.2026</div>
+      <div class="headline xl">Get paid for <span class="gold">partial-month</span> compliance.</div>
+      <p class="body" style="margin-top:16px;">Previously, no RPM reimbursement under <strong>16 days</strong> of recorded data. As of 2026, that changes.</p>
+    </div>
+    <div class="col-right">
+      <div class="callout">
+        <div class="callout-tag">CPT 99445</div>
+        <div class="callout-head" style="font-size:22px;">2 to 15 days is now billable.</div>
+        <div class="callout-body">Get paid for partial adherence. Time and care are reimbursed even when patients miss check-ins.</div>
+      </div>
+      <div class="callout light" style="margin-top:14px;">
+        <div class="callout-tag">CPT 99470</div>
+        <div class="callout-head" style="font-size:22px;">First 10 to 20 minutes of RPM management.</div>
+        <div class="callout-body">A new lower-tier code capturing shorter interactions below the old 20-minute threshold.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>08 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 09 ADMIN SUPPORT ═════════ -->
+<section class="slide">
+  <div class="two-col">
+    <div class="col-left">
+      <div class="sn">09</div>
+      <div class="subhead">Administrative Support</div>
+      <div class="headline xl">Admin work.<br><span class="gold">Handled.</span></div>
+      <p class="body" style="margin-top:14px;">Every minute counts toward billable care management time.</p>
+      <div class="quote">
+        <p>"All coordination is documented and contributes toward billable care management time."</p>
+      </div>
+    </div>
+    <div class="col-right" style="gap:12px;">
+      <div class="box">
+        <div class="tag">Prior Authorization</div>
+        <div class="box-head">Support &amp; Documentation</div>
+        <div class="desc">Coordination and documentation handled. Front desk bottleneck gone.</div>
+      </div>
+      <div class="box">
+        <div class="tag">Medication</div>
+        <div class="box-head">Refill Management</div>
+        <div class="desc">Requests routed, documented, processed. Patients stay on regimen.</div>
+      </div>
+      <div class="box">
+        <div class="tag">Scheduling</div>
+        <div class="box-head">Appointments &amp; Follow-Up</div>
+        <div class="desc">Visits confirmed. No-shows rescheduled. Care gaps closed.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>09 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 10 ENROLLMENT ═════════ -->
+<section class="slide">
+  <div style="display:grid; grid-template-rows: auto 1fr; height: 100%; gap: 22px;">
+    <div>
+      <div class="sn">10</div>
+      <div class="subhead">Enrollment Strategy</div>
+      <div style="display:grid; grid-template-columns: 1fr auto; align-items: end; gap: 30px;">
+        <div class="headline xl">Your team drives it. <span class="gold">We power it.</span></div>
+        <p class="body" style="max-width: 340px; padding-bottom: 8px;">In-house provider endorsement is the most effective enrollment channel. We bring the tools and the outbound muscle.</p>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1.15fr 1fr; gap: 16px;">
+
+      <!-- IN-HOUSE (dark, hero) -->
+      <div style="background: var(--ink); color:#fff; border-radius: 16px; padding: 28px 26px; display:flex; flex-direction:column;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:2.5px; text-transform:uppercase; color: var(--gold-light); font-weight:500;">Most Effective</div>
+          <div style="font-size:9px; letter-spacing:2px; text-transform:uppercase; color: rgba(255,255,255,0.5); font-weight:700;">In-House</div>
+        </div>
+        <div style="font-family:'Playfair Display', serif; font-size:38px; font-style:italic; font-weight:400; color:#fff; margin-bottom:18px; line-height:1; letter-spacing:-0.5px;">Clinic-Driven<br>Enrollment</div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px 14px;">
+          <div style="padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.12);">
+            <div style="font-size:12.5px; font-weight:700; color:#fff; line-height:1.2;">Front Office Marketing</div>
+            <div style="font-size:10.5px; color:rgba(255,255,255,0.65); margin-top:2px;">Check-in scripts &amp; conversations</div>
+          </div>
+          <div style="padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.12);">
+            <div style="font-size:12.5px; font-weight:700; color:#fff; line-height:1.2;">Provider Endorsement</div>
+            <div style="font-size:10.5px; color:rgba(255,255,255,0.65); margin-top:2px;">Introduced during patient visits</div>
+          </div>
+          <div style="padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.12);">
+            <div style="font-size:12.5px; font-weight:700; color:#fff; line-height:1.2;">Flyers at the Front</div>
+            <div style="font-size:10.5px; color:rgba(255,255,255,0.65); margin-top:2px;">Waiting room &amp; check-in desk</div>
+          </div>
+          <div style="padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.12);">
+            <div style="font-size:12.5px; font-weight:700; color:#fff; line-height:1.2;">In-Office Pop-Ups</div>
+            <div style="font-size:10.5px; color:rgba(255,255,255,0.65); margin-top:2px;">Tabletop displays &amp; signage</div>
+          </div>
+          <div style="padding: 9px 0;">
+            <div style="font-size:12.5px; font-weight:700; color:#fff; line-height:1.2;">Social Media Posts</div>
+            <div style="font-size:10.5px; color:rgba(255,255,255,0.65); margin-top:2px;">Patient-facing awareness</div>
+          </div>
+          <div style="padding: 9px 0;">
+            <div style="font-size:12.5px; font-weight:700; color:#fff; line-height:1.2;">Mass Text Messages</div>
+            <div style="font-size:10.5px; color:rgba(255,255,255,0.65); margin-top:2px;">Direct patient outreach</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CADE SUPPORT (light) -->
+      <div style="background: var(--cream-card); border: 1.5px solid var(--border); border-radius: 16px; padding: 28px 26px; display:flex; flex-direction:column;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:2.5px; text-transform:uppercase; color: var(--gold); font-weight:500;">We Support</div>
+          <div style="font-size:9px; letter-spacing:2px; text-transform:uppercase; color: var(--ink-muted); font-weight:700;">CADE-Driven</div>
+        </div>
+        <div style="font-family:'Playfair Display', serif; font-size:38px; font-style:italic; font-weight:400; color:var(--ink); margin-bottom:18px; line-height:1; letter-spacing:-0.5px;">How We<br>Back You Up</div>
+
+        <div style="display:flex; flex-direction:column;">
+          <div style="padding: 13px 0; border-bottom: 1px solid var(--border); display:flex; gap:14px; align-items:flex-start;">
+            <div style="font-family:'Playfair Display',serif; font-size:22px; font-style:italic; font-weight:400; color:var(--gold); line-height:0.9; min-width:24px;">1</div>
+            <div>
+              <div style="font-size:13px; font-weight:600; color:var(--ink); line-height:1.2;">We Supply the Flyers</div>
+              <div style="font-size:11.5px; color:var(--ink-soft); margin-top:3px; line-height:1.5;">Branded, compliant, ready to print.</div>
+            </div>
+          </div>
+          <div style="padding: 13px 0; border-bottom: 1px solid var(--border); display:flex; gap:14px; align-items:flex-start;">
+            <div style="font-family:'Playfair Display',serif; font-size:22px; font-style:italic; font-weight:400; color:var(--gold); line-height:0.9; min-width:24px;">2</div>
+            <div>
+              <div style="font-size:13px; font-weight:800; color:var(--ink); line-height:1.2;">We Supply the Pop-Ups</div>
+              <div style="font-size:11.5px; color:var(--ink-soft); margin-top:3px; line-height:1.5;">Tabletop signage and waiting-room displays.</div>
+            </div>
+          </div>
+          <div style="padding: 13px 0; display:flex; gap:14px; align-items:flex-start;">
+            <div style="font-family:'Playfair Display',serif; font-size:22px; font-style:italic; font-weight:400; color:var(--gold); line-height:0.9; min-width:24px;">3</div>
+            <div>
+              <div style="font-size:13px; font-weight:800; color:var(--ink); line-height:1.2;">Outbound Calls to Eligible Patients</div>
+              <div style="font-size:11.5px; color:var(--ink-soft); margin-top:3px; line-height:1.5;">EMR review, direct outreach, education, and activation on your behalf.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>10 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 11 PRE-ENROLLMENT ═════════ -->
+<section class="slide">
+  <div style="display:grid; grid-template-rows: auto 1fr; height: 100%; gap: 22px;">
+    <div>
+      <div class="sn">11</div>
+      <div class="subhead">Process</div>
+      <div class="headline xl">Pre-enrollment, step by <span class="gold">step</span>.</div>
+    </div>
+    <div class="timeline-h four" style="align-items:start;">
+      <div class="tl-col">
+        <div class="tl-tag">Step 1</div>
+        <div class="tl-title">Patient Education</div>
+        <div class="tl-desc">Clinic introduces the program through office discussions, materials, or outreach.</div>
+      </div>
+      <div class="tl-col">
+        <div class="tl-tag">Step 2</div>
+        <div class="tl-title">Patient Consent</div>
+        <div class="tl-desc">Interested patients give consent. Clinic notifies our clinical team.</div>
+      </div>
+      <div class="tl-col">
+        <div class="tl-tag">Step 3</div>
+        <div class="tl-title">Contact &amp; Insurance Verification</div>
+        <div class="tl-desc">Our staff reaches the patient, reviews the program, and verifies coverage.</div>
+      </div>
+      <div class="tl-col">
+        <div class="tl-tag">Step 4</div>
+        <div class="tl-title">Monitoring Begins</div>
+        <div class="tl-desc">Devices ship. Clinical oversight starts. Data flows between visits.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>11 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 12 BILLING ═════════ -->
+<section class="slide">
+  <div style="display:grid; grid-template-rows: auto 1fr; height: 100%; gap: 22px;">
+    <div>
+      <div class="sn">12</div>
+      <div class="subhead">Billing</div>
+      <div style="display:grid; grid-template-columns: 1fr auto; align-items: end; gap: 30px;">
+        <div class="headline xl">The billing <span class="gold">workflow</span>.</div>
+      </div>
+    </div>
+    <div class="timeline-h" style="align-items:start; grid-template-columns:repeat(5, 1fr);">
+      <div class="tl-col">
+        <div class="tl-tag">Step 1</div>
+        <div class="tl-title">Monitoring &amp; Care Management</div>
+        <div class="tl-desc">Clinical team monitors device data and documents all care activity.</div>
+      </div>
+      <div class="tl-col">
+        <div class="tl-tag">Step 2</div>
+        <div class="tl-title">Monthly Coding Report</div>
+        <div class="tl-desc">End of month CSV with eligible CPT codes for every patient.</div>
+      </div>
+      <div class="tl-col">
+        <div class="tl-tag">Step 3</div>
+        <div class="tl-title">You Submit Claims</div>
+        <div class="tl-desc">Clinic files to insurance using our report. We assist where needed.</div>
+      </div>
+      <div class="tl-col">
+        <div class="tl-tag">Step 4</div>
+        <div class="tl-title">Insurance Reimburses</div>
+        <div class="tl-desc">Commercial, Medicare, Medicaid. Eligibility and copay confirmed upfront.</div>
+      </div>
+      <div class="tl-col">
+        <div class="tl-tag">Step 5</div>
+        <div class="tl-title">Pay CADE at Net 60</div>
+        <div class="tl-desc">CADE invoices 60 days after submitting the monthly billing report. No upfront costs.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>12 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 16 STAY INFORMED ═════════ -->
+<section class="slide">
+  <div style="display:grid; grid-template-rows: auto 1fr; height: 100%; gap: 18px;">
+    <div>
+      <div class="sn">13</div>
+      <div class="subhead">Staying Informed</div>
+      <div class="headline xl">How providers stay <span class="gold">informed</span>.</div>
+    </div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
+      <div class="box" style="display:flex; flex-direction:column;">
+        <div class="tag">Monthly</div>
+        <div class="box-head" style="font-size:24px;">Summary Report</div>
+        <div class="desc" style="margin-top:10px; display:flex; flex-direction:column; gap:6px;">
+          <div><strong>Data Trends:</strong> BP, weight, SpO2, and glucose readings plotted over 30 days.</div>
+          <div><strong>Analysis Trends:</strong> Highs, lows, averages, and directional movement flagged.</div>
+          <div><strong>Patient Canvas:</strong> A full picture of what happened between visits, giving your cardiologist the context before the patient walks in.</div>
+        </div>
+        <div style="margin-top:10px; padding-top:8px; border-top:1px solid var(--border); font-family:'Montserrat',sans-serif; font-size:10.5px; color:var(--ink-muted); line-height:1.45; font-style:italic;">No new dashboards. No new logins. We only reach out when action is needed.</div>
+      </div>
+      <div class="box" style="display:flex; flex-direction:column;">
+        <div class="tag">Real-Time</div>
+        <div class="box-head" style="font-size:24px;">Escalation Alerts</div>
+        <div class="desc" style="margin-top:10px; display:flex; flex-direction:column; gap:6px;">
+          <div><strong>Threshold Breaches:</strong> BP spikes, weight gain exceeding limits, SpO2 drops below safe range.</div>
+          <div><strong>Trend Alerts:</strong> Gradual directional changes flagged before they become acute.</div>
+          <div><strong>Routed to Preference:</strong> Alerts delivered to provider, NP, or MA based on your escalation protocol.</div>
+        </div>
+        <div style="margin-top:auto; padding-top:8px; border-top:1px solid var(--border); font-family:'JetBrains Mono',monospace; font-size:8.5px; letter-spacing:1.8px; text-transform:uppercase; color:var(--ink-muted); font-weight:500;">Contact Only When Needed</div>
+      </div>
+      <div class="box dark" style="display:flex; flex-direction:column;">
+        <div class="tag">Continuous</div>
+        <div class="box-head" style="font-size:24px;">EMR Documentation</div>
+        <div class="desc" style="margin-top:10px; color:rgba(255,255,255,0.82); display:flex; flex-direction:column; gap:6px;">
+          <div><strong style="color:var(--gold-light);">Care Notes:</strong> Every reading reviewed, every interaction documented.</div>
+          <div><strong style="color:var(--gold-light);">Audit-Ready:</strong> CPT-compliant RPM activity logged with timestamps.</div>
+          <div><strong style="color:var(--gold-light);">Continuity:</strong> Notes in the chart before the provider opens it.</div>
+        </div>
+        <div style="margin-top:auto; padding-top:8px; border-top:1px solid rgba(255,255,255,0.15); font-family:'JetBrains Mono',monospace; font-size:8.5px; letter-spacing:1.8px; text-transform:uppercase; color:var(--gold-light); font-weight:500;">Fully Documented</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>13 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 17 IMPLEMENTATION ═════════ -->
+<section class="slide">
+  <div style="display:grid; grid-template-rows: auto 1fr; height: 100%; gap: 22px;">
+    <div>
+      <div class="sn">14</div>
+      <div class="subhead">Implementation</div>
+      <div style="display:grid; grid-template-columns: 1fr auto; align-items: end; gap: 30px;">
+        <div class="headline xl">Signature to live in <span class="gold">weeks</span>.</div>
+        <p class="body" style="max-width: 340px; padding-bottom: 8px;">Five steps from contract execution to enrolled patients under monitoring.</p>
+      </div>
+    </div>
+    <div class="timeline-h five" style="align-items:start;">
+      <div class="tl-col">
+        <div class="tl-tag">Step 1</div>
+        <div class="tl-title">Finalize Agreement</div>
+        <div class="tl-desc">Service agreement reviewed and executed.</div>
+      </div>
+      <div class="tl-col">
+        <div class="tl-tag">Step 2</div>
+        <div class="tl-title">Onboarding &amp; Alignment</div>
+        <div class="tl-desc">Two sessions. Workflow, enrollment, team introductions.</div>
+      </div>
+      <div class="tl-col">
+        <div class="tl-tag">Step 3</div>
+        <div class="tl-title">Technical Setup</div>
+        <div class="tl-desc">EHR access. Outbound call configuration.</div>
+      </div>
+      <div class="tl-col">
+        <div class="tl-tag">Step 4</div>
+        <div class="tl-title">Launch</div>
+        <div class="tl-desc">Devices ship. Monitoring begins.</div>
+      </div>
+      <div class="tl-col">
+        <div class="tl-tag">Step 5</div>
+        <div class="tl-title">Performance Oversight</div>
+        <div class="tl-desc">Monthly for 90 days. Quarterly thereafter.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>14 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 18 TESTIMONIALS & CLIENTS ═════════ -->
+<section class="slide">
+  <div class="two-col" style="grid-template-columns: 1fr 1.15fr;">
+    <div class="col-left" style="justify-content:flex-start;">
+      <div class="sn">15</div>
+      <div class="subhead">CADE Medical Partnered With 1Bios</div>
+      <div class="headline" style="font-size:54px;">Trusted by<br>practices <span class="gold">nationwide</span>.</div>
+      <div class="ally-badge" style="margin-top:20px;"><span class="dot"></span>Customer Testimonials</div>
+
+      <div class="client-wall" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="client-badge"><span>FH Medical Care</span></div>
+        <div class="client-badge"><span>Hackensack Meridian</span></div>
+        <div class="client-badge"><span>Absolute Urgent Care</span></div>
+        <div class="client-badge"><span>BCS</span></div>
+        <div class="client-badge"><span>Broadway Medical</span></div>
+        <div class="client-badge"><span>Health Visions MD</span></div>
+        <div class="client-badge"><span>S2S Medical</span></div>
+        <div class="client-badge"><span>Central Texas Heart</span></div>
+        <div class="client-badge"><span>Hinds 4 Health</span></div>
+        <div class="client-badge"><span>CommuniCare</span></div>
+        <div class="client-badge"><span>Core Primary Care</span></div>
+        <div class="client-badge"><span>Houston Endocrinology</span></div>
+        <div class="client-badge"><span>Curana Health</span></div>
+        <div class="client-badge"><span>Dimas Medical</span></div>
+        <div class="client-badge"><span>Houston Methodist</span></div>
+        <div class="client-badge"><span>Dr. Purl's Fast Care</span></div>
+        <div class="client-badge"><span>Eastern Cardiology</span></div>
+        <div class="client-badge"><span>Goldson Medical</span></div>
+      </div>
+    </div>
+
+    <div class="col-right" style="justify-content:flex-start;">
+      <div class="sec-label gold" style="margin-top:0;">CADE Medical + 1Bios · In Their Words</div>
+      <div class="testimonial-list">
+        <div class="testimonial">
+          <p>"They took the workload off our staff so we didn't need to hire more people."</p>
+          <div class="attr">Michelle Holle &nbsp;<span>·</span>&nbsp; CEO, Victory Medical</div>
+        </div>
+        <div class="testimonial">
+          <p>"The care team really gets to know our patients and helps us deliver more valuable care."</p>
+          <div class="attr">Dr. Marc Schwartz &nbsp;<span>·</span>&nbsp; Central Texas Heart Center</div>
+        </div>
+        <div class="testimonial">
+          <p>"We've been able to grow our patient base thanks to our partnership."</p>
+          <div class="attr">Dr. Liza Ekole &nbsp;<span>·</span>&nbsp; President, CRQ Precision Medicine</div>
+        </div>
+        <div class="testimonial">
+          <p>"Organized and professional — from enrollment to care delivery to billing."</p>
+          <div class="attr">Dr. Atul Palkar &nbsp;<span>·</span>&nbsp; Pulmonary Physicians of Norwich</div>
+        </div>
+        <div class="testimonial">
+          <p>"They know the RPM/CCM codes inside and out. We're compliant and collecting."</p>
+          <div class="attr">Rich Eggleston &nbsp;<span>·</span>&nbsp; Eggleston and Eggleston</div>
+        </div>
+        <div class="testimonial">
+          <p>"Feels like part of our practice — they're always there for us."</p>
+          <div class="attr">Dr. Arthur Yunov &nbsp;<span>·</span>&nbsp; Cohen and Yunov Medical</div>
+        </div>
+        <div class="testimonial">
+          <p>"The positive impacts go far beyond blood pressure readings and chronic care management."</p>
+          <div class="attr">Dr. Justin Ratcliffe &nbsp;<span>·</span>&nbsp; CMO, Sorin Medical</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>15 / 17</div>
+  </div>
+</section>
+
+<!-- ═════════ 19 CTA ═════════ -->
+<section class="slide cta-slide">
+  <div style="font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); font-weight:600; margin-bottom: 28px;">Thank You</div>
+  <div class="headline" style="font-size: 96px; letter-spacing: -2.5px; margin-bottom: 20px; text-align:center;">
+    Let's get <span class="gold">started</span>.
+  </div>
+  <p class="body" style="text-align:center; max-width: 480px; font-size: 15px;">Happy to walk through enrollment volumes, EMR integration, or build a tailored revenue projection against your panel.</p>
+
+  <div style="width: 60px; height: 2px; background: var(--gold); margin: 36px auto 20px;"></div>
+
+  <div style="font-family:'Playfair Display',serif; font-size: 34px; font-style: italic; color: var(--ink); margin-bottom: 5px;">Colin Smith</div>
+  <div style="font-size: 11px; font-weight:400; color: var(--ink-muted); letter-spacing: 2.5px; text-transform: uppercase;">Hawaii Connected Care &nbsp;·&nbsp; CADE Medical</div>
+
+  <div style="display:flex; gap:28px; align-items:center; justify-content:center; margin-top:18px;">
+    <a href="tel:+18088240205" style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--ink); text-decoration:none; letter-spacing:0.5px;">(808) 824-0205</a>
+    <div style="width:3px; height:3px; border-radius:50%; background: var(--gold);"></div>
+    <a href="mailto:colin@cademed.com" style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--ink); text-decoration:none; letter-spacing:0.5px;">colin@cademed.com</a>
+  </div>
+
+  <a href="mailto:colin@cademed.com?subject=CADE%20Connected%20Care%20%E2%80%94%20follow-up&amp;body=Hi%20Colin%2C%0A%0AI%27d%20like%20to%20talk%20through%20the%20Connected%20Care%20program%20for%20our%20practice." class="cta-btn">Schedule a Call</a>
+
+  <div class="slide-footer">
+    <div class="left">CADE <span>Medical</span> · Connected Care</div>
+    <div>16 / 17</div>
+  </div>
+</section>
+
+</body>
+</html>
